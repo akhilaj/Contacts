@@ -63,15 +63,17 @@ namespace ContactLibrary.API.Controllers
 
         // PUT api/contacts/{guid}
         [HttpPut("{contactId}")]
-        public async Task<IActionResult> PutAsync(Guid contactId, [FromBody] Entities.Contact contact)
+        public async Task<IActionResult> UpdateContact(Guid contactId, [FromBody] ContactForUpdationDto contact)
         {
-            if (ModelState.IsValid && contactId == contact?.Id)
+            var contactEntity = _mapper.Map<Entities.Contact>(contact);
+
+            if (ModelState.IsValid && contactId == contactEntity?.Id)
             {
                 var contactToUpdate = await _contactLibraryRepository.GetContactAsync(contactId).ConfigureAwait(false);
                 if (contactToUpdate != null)
                 {
-                    _contactLibraryRepository.UpdateContact(contact);
-
+                    _contactLibraryRepository.UpdateContact(contactEntity);
+                    await _contactLibraryRepository.SaveAsync().ConfigureAwait(false);
                     return new NoContentResult();
                 }
                 return NotFound();

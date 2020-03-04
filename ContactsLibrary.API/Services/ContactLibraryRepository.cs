@@ -109,7 +109,12 @@ namespace ContactLibrary.API.Services
 
         public void UpdateContact(Contact contact)
         {
-            // no code in this implementation
+            if (contact == null)
+            {
+                throw new ArgumentNullException(nameof(contact));
+            }
+
+            _context.Entry(contact).State = EntityState.Modified;
         }
 
         public async Task<bool> SaveAsync()
