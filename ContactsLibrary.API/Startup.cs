@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
+using Microsoft.OpenApi.Models;
 
 namespace ContactsLibrary.API
 {
@@ -46,6 +47,10 @@ namespace ContactsLibrary.API
             services.AddScoped<IContactLibraryRepository, ContactLibraryRepository>();
 
             services.AddDbContext<ContactLibraryContext>(options=> { options.UseSqlServer(Configuration.GetConnectionString("ContactConnection")); });
+
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Contact API", Version = "v1" });});
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +64,13 @@ namespace ContactsLibrary.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseSwagger();
+            
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Contact API V1");
+            });
 
             app.UseAuthorization();
 
