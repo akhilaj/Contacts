@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using ContactLibrary.API.Helpers;
 using ContactLibrary.API.Models;
 using ContactLibrary.API.ResourceParameters;
 using ContactLibrary.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ContactLibrary.API.Controllers
@@ -67,13 +66,27 @@ namespace ContactLibrary.API.Controllers
         {
             var contactEntity = _mapper.Map<Entities.Contact>(contact);
 
-            if (ModelState.IsValid && contactId == contactEntity?.Id)
+            if (contactId == contactEntity?.Id)
             {
                 var contactToUpdate = await _contactLibraryRepository.GetContactAsync(contactId).ConfigureAwait(false);
                 if (contactToUpdate != null)
                 {
                     _contactLibraryRepository.UpdateContact(contactEntity);
-                    await _contactLibraryRepository.SaveAsync().ConfigureAwait(false);
+                    try
+                    {
+                        await _contactLibraryRepository.SaveAsync().ConfigureAwait(false);
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!await _contactLibraryRepository.ContactExistsAsync(contactId).ConfigureAwait(false))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
                     return new NoContentResult();
                 }
                 return NotFound();

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContactLibrary.API.Models
 {
     public class ContactForUpdationDto : ContactForCreationDto
     {
+        [Required]
         public Guid Id { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ContactLibrary.API.Entities
@@ -23,10 +22,11 @@ namespace ContactLibrary.API.Entities
         [EmailAddress]
         public string Email { get; set; }
 
-        [DataType(DataType.PhoneNumber)]
+        [Phone]
         [MaxLength(50)]
         public string PhoneNumber { get; set; }
 
+        [Required]
         public StatusCode Status { get; set; }
     }
 

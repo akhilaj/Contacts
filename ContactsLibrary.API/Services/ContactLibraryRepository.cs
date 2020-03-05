@@ -66,7 +66,7 @@ namespace ContactLibrary.API.Services
 
         public async Task<IEnumerable<Contact>> GetContactsAsync()
         {
-            return await _context.Contacts.ToListAsync().ConfigureAwait(false);
+            return await _context.Contacts.AsNoTracking().ToListAsync().ConfigureAwait(false);
         }
          
         public async Task<IEnumerable<Contact>> GetContactsAsync(IEnumerable<Guid> contactIds)
@@ -79,6 +79,7 @@ namespace ContactLibrary.API.Services
             return await _context.Contacts.Where(a => contactIds.Contains(a.Id))
                 .OrderBy(a => a.FirstName)
                 .OrderBy(a => a.LastName)
+                .AsNoTracking()
                 .ToListAsync().ConfigureAwait(false);
         }
 
